@@ -2,7 +2,7 @@
     --primario: #0cb91a;
     --secundario: #FFC845;
     --negro: #000000;
-    --claro: #FFFFFF;
+    --claro: #2f2f2f;
     --gris: #EEEEEE;
     --oscuro: #43d118;
     --padding: 1rem;
@@ -53,7 +53,6 @@ p {
     line-height: 2rem;
     font-size: 1.2rem;
     font-weight: 300;
-    color: #EEEEEE;
 }
 
 .boton {
@@ -161,13 +160,11 @@ p {
 }
 
 .card {
-    background-color: var(--claro);
     padding: var(--padding);
     border: 1px solid rgb(199, 199, 199);
 }
 
 .card p {
-    font-size: .9rem;
     line-height: 1.8rem;
 }
 

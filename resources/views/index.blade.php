@@ -15,7 +15,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="bootstrap-5.1.3-dist/bootstrap-5.1.3-dist/css/bootstrap.css">
     <link rel="stylesheet" href="style/style.css">
-    <link rel="stylesheet" href="style/stilo_aboisai.css">
+    <link rel="stylesheet" href="style/v.css">
     <title>proyecto</title>
 </head>
 

@@ -13,10 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('imain');
-})->name('imain');
-
+Route::get('/',  [\App\Http\Controllers\ComponenteController::class, 'getComponentes'])->name('imain');
 
 Route::get('/sobre-nosotros', function () {
     return view('Sobre_nosotros');

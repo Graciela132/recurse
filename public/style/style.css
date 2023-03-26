@@ -72,3 +72,24 @@ body {
 .content_Micuenta {
     background: url(../img/fondos-de-pantalla-gaming.png);
 }
+
+.card:hover {
+    box-shadow: 0 4px 8px 0 rgb(255, 0, 0);
+    transition: 0.3s;
+}
+
+.card:hover .card-title {
+    color: #007bff;
+}
+
+.card:hover .card-text {
+    color: #050505
+}
+.card-text {
+    margin-top: 10px;
+    color: #d03535
+}
+a {
+    text-decoration: none;
+    color: #000000;
+}
