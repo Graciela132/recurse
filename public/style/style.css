@@ -4,7 +4,7 @@
 }
 
 body {
-    background-image: url(../img/fondos-de-pantalla-gaming.png);
+    background: #2f2f2f;
 }
 
 .conten_prin {
@@ -56,7 +56,7 @@ body {
 }
 
 #componentes {
-    background: url(../img/fondos-de-pantalla-gaming.png);
+    background: #4a5568;
 }
 
 #imglogo {
@@ -74,8 +74,9 @@ body {
 }
 
 .card:hover {
-    box-shadow: 0 4px 8px 0 rgb(255, 0, 0);
+    box-shadow: 0 4px 8px 0 rgb(0, 34, 255);
     transition: 0.3s;
+    background: #b6b6b6;
 }
 
 .card:hover .card-title {
