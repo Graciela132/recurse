@@ -32,21 +32,48 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ route('imain') }}">Inicio</a>
+                        <a class="nav-link {{ Request::routeIs('imain') ? 'active' : '' }}" href="{{ route('imain') }}">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('categorias') }}">Categorias</a>
+                        <a class="nav-link {{ Request::routeIs('categorias') ? 'active' : '' }}" href="{{ route('categorias') }}">Categorias</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('sobre') }}">Sobre Nosotros</a>
+                        <a class="nav-link {{ Request::routeIs('sobre') ? 'active' : '' }}" href="{{ route('sobre') }}">Sobre Nosotros</a>
                     </li>
-                    <!--<li class="nav-item">
-                        <a class="nav-link" href="login.php">Mi cuenta</a>
-                    </li>
-                -->
-                </ul>
 
+                    @guest
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('login') }}">INICIAR SESION</a>
+                        </li>
+                    @else
+                        @if(Auth::user()->id_rol==2)
+                            <li class="nav-item">
+                                <a class="nav-link {{ Request::routeIs('paneladm') ? 'active' : '' }}" href="{{ route('paneladm') }}">Panel Administrador</a>
+                            </li>
+                        @endif
+
+                        <li class="nav-item dropdown">
+                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                {{ Auth::user()->name }}
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{{ route('logout') }}"
+                                   onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                    {{ __('Logout') }}
+                                </a>
+
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
+                            </div>
+                        </li>
+
+                    @endguest
+                </ul>
             </div>
+
         </div>
     </nav>
 

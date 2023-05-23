@@ -52,7 +52,6 @@
             </div>
         </div>
     </div>
-    </div>
     <!--COMPONENTES-->
     <div id="componentes">
         <div class="container-md">
