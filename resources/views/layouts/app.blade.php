@@ -14,7 +14,7 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
     <link rel="stylesheet" href="css/all.min.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
-
+    <link rel="stylesheet" href="style/styleLog.css">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
 </head>

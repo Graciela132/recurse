@@ -1,22 +1,44 @@
 @extends('index')
 @section('principal')
-    <div class="row row-cols- row-cols-md-4 g-4">
-        @foreach($componentes as $componente)
-            <div class="col">
-                <div class="card h-100" style="width: 18rem;">
-                    <div class="card-body">
-                        @php
-                            $imagen = base64_encode($componente->imagen);
-                        @endphp
-                        <img src="data:image/png;base64,{{$imagen}}" alt='Img blob desde MySQL' class="img-fluid" />
-                        <h5 class="card-title">{{$componente->nombre_componente}}</h5>
-                        <p class="card-text">{{$componente->descripcion_componente}}</p>
-                        <button onclick="clickMe('1')" type="button" class="btn btn-primary">{{$componente->precio_actual_componente}}</button>
+    <link rel="stylesheet" href="/css/productos.css">
+    <section class="section-products">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="header">
+                        <h3>Nuevos Productos</h3>
+                        <h2>Productos Populares</h2>
                     </div>
                 </div>
             </div>
-        @endforeach
-    </div>
+            <div class="row">
+                <!-- Single Product -->
+                @foreach($componentes as $componente)
+                    <div class="col-md-3 col-lg-3 col-xl-3">
+                        <div id="product-4" class="single-product">
+                            @php
+                                $imagen = base64_encode($componente->imagen);
+                            @endphp
+                            <div class="part-1 img-fluid">
 
+                                <img src="data:image/png;base64,{{$imagen}}" alt='Img blob desde MySQL'
+                                     class="img-fluid"/>
+                                <span class="new">new</span>
+                                <ul>
+                                    <li><a href="#"><i class="fas fa-shopping-cart"></i></a></li>
+                                </ul>
+                            </div>
+                            <div class="part-2">
+                                <h3 class="product-title">{{$componente->nombre_componente}}</h3>
+
+                                <h3 class="product-title">{{$componente->descripcion_componente}}</h3>
+                                <h4 class="product-price">{{$componente->precio_actual_componente}}</h4>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
 
 @endsection
