@@ -2,16 +2,22 @@
 
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ComponenteController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MarcaController;
+use App\Models\CarritoTd;
 use App\Models\Categorium;
 use App\Models\Componente;
+use App\Models\DetalleVentum;
 use App\Models\Marca;
+use App\Models\Ventum;
+use \App\Http\Controllers\MailController;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 
-
-Route::get('/',  [ComponenteController::class, 'getComponentes'])
+Route::get('/', [ComponenteController::class, 'getComponentes'])
     ->name('imain');
 
 Route::get('/sobre-nosotros', function () {
@@ -37,7 +43,7 @@ Route::get('/marcasad', function () {
 })->name('marcasad');
 
 Route::post('/addmarca', function (Illuminate\Http\Request $request) {
-    $marca = App\Models\Marca::create([
+    $marca = Marca::create([
         'nombre_marca' => $request->input('nombre_marca'),
         'status' => $request->has('estatus'),
     ]);
@@ -48,8 +54,90 @@ Route::post('/addmarca', function (Illuminate\Http\Request $request) {
 //editmarcas
 Route::get('/marcaedit/{id}', [MarcaController::class, 'editar'])->name('marcaedit');
 
+
+//CARRITOTD
+Route::get('/carrito', [\App\Http\Controllers\CarritoController::class, 'getListado'])->name('carrito');
+
+Route::get('/agregarpcarrito/{id}/{cat}', [\App\Http\Controllers\CarritoController::class, 'addcarrito'])->name('agregarpcarrito');
+
+Route::get('/compa-exitosa', function () {
+    $carritos = CarritoTd::where('id_usuario', Auth::user()->id)->get();
+    $venta = new Ventum();
+    $fecha = date('Ymd'); // Obtener la fecha actual en formato YYYYMMDD
+
+    // Obtener el último folio de venta para la fecha actual
+    $ultimoFolio = Ventum::where('folio_venta', 'like', $fecha . '%')->max('folio_venta');
+
+    if ($ultimoFolio) {
+        // Obtener el número del último folio y sumarle 1
+        $ultimoNumero = (int)substr($ultimoFolio, -4);
+        $nuevoNumero = $ultimoNumero + 1;
+    } else {
+        // Si no hay folios anteriores para la fecha actual, iniciar desde 1
+        $nuevoNumero = 1;
+    }
+
+    // Formatear el nuevo número con ceros a la izquierda (4 dígitos)
+    $nuevoNumeroFormateado = str_pad($nuevoNumero, 4, '0', STR_PAD_LEFT);
+
+    // Generar el folio de venta concatenando la fecha y el nuevo número
+    $folioVenta = $fecha . $nuevoNumeroFormateado;
+    $venta->folio_venta = $folioVenta;
+    $venta->fecha_venta = now(); // Fecha actual
+    $venta->id_usuario = Auth::user()->id;
+    $venta->total_venta = 0;
+    $venta->save();
+    $totalVenta = 0; // Variable para almacenar el total de la venta
+
+    foreach ($carritos as $carrito) {
+        $detalleVenta = new DetalleVentum();
+        $detalleVenta->folio_venta = $venta->folio_venta;
+        $detalleVenta->clave_componente = $carrito->clave_componente;
+        $detalleVenta->cantidad_componente = $carrito->cantidad;
+
+        // Obtener el componente correspondiente al carrito
+
+        $componente = Componente::findOrFail($carrito->clave_componente);
+
+        // Calcular el precio de venta basado en el precio del componente y la cantidad
+        $precioVenta = $componente->precio_actual_componente * $carrito->cantidad;
+
+        $componente->existencia_componente = $componente->existencia_componente - $carrito->cantidad;
+        $componente->save();
+
+        $detalleVenta->precio_venta = $precioVenta;
+
+        $detalleVenta->save();
+
+        $totalVenta += $precioVenta; // Sumar el precio de venta al total de la venta
+    }
+
+    // Actualizar el total de la venta en el modelo Ventum
+    $venta->total_venta = $totalVenta;
+    $venta->save();
+    $detalleVentaList = DetalleVentum::where('folio_venta', $venta->folio_venta)->get();
+
+    CarritoTd::where('id_usuario', Auth::user()->id)->delete();
+
+    return view('shop.LcompraE', ['detalleVentaList' => $detalleVentaList, 'id_v' => $venta->folio_venta]);
+})->name('compa-exitosa');
+
+//GENERACION PDF
+Route::get("/factura/{id_v}", function ($id_v) {
+    $detalleVentaList = DetalleVentum::where('folio_venta', $id_v)->get();
+    $dompdf = App::make("dompdf.wrapper");
+    $dompdf->loadView("factura.factura", [
+        "nombre" => "Luis Cabrera Benito",
+        "detalleVentaList" => $detalleVentaList,
+    ]);
+    return $dompdf->stream();
+})->name('factura');
+
+Route::get("/enviar-factura/{id_v}", [MailController::class, 'enviarCorreo'])
+    ->name('enviar.factura');
+
 Route::post('/editmarca', function (Illuminate\Http\Request $request) {
-    $marca = App\Models\Marca::findOrFail($request->input('id_marca'));
+    $marca = Marca::findOrFail($request->input('id_marca'));
     $marca->nombre_marca = $request->input('nombre_marca');
     $marca->status = $request->has('estatus');
     $marca->save();
@@ -59,7 +147,6 @@ Route::post('/editmarca', function (Illuminate\Http\Request $request) {
 
 //deletemarca
 Route::delete('/marca/{id}', [MarcaController::class, 'eliminar'])->name('marca');
-
 
 
 //CATEGORIAS
@@ -75,7 +162,7 @@ Route::delete('/categoriaborrar/{id}', [CategoriaController::class, 'eliminar'])
 Route::get('/categoriaedit/{id}', [CategoriaController::class, 'editar'])->name('categoriaedit');
 
 Route::post('/editcategoria', function (Illuminate\Http\Request $request) {
-    $categoria = App\Models\Categorium::findOrFail($request->input('id_categoria'));
+    $categoria = Categorium::findOrFail($request->input('id_categoria'));
     $categoria->nombre_categoria = $request->input('nombre_categoria');
     $categoria->descripcion_categoria = $request->input('descripcion_categoria');
     $categoria->status_categoria = $request->has('estatus');
@@ -111,7 +198,7 @@ Route::delete('/componenteborrar/{id}', [ComponenteController::class, 'eliminar'
 Route::get('/componenteedit/{id}', [ComponenteController::class, 'editar'])->name('componenteedit');
 
 Route::post('/editcomponente', function (Illuminate\Http\Request $request) {
-    $componente = App\Models\Componente::findOrFail($request->input('id_componente'));
+    $componente = Componente::findOrFail($request->input('id_componente'));
     $componente->nombre_componente = $request->input('nombre_componente');
     $componente->descripcion_componente = $request->input('descripcion_componente');
     $componente->status_componente = $request->has('estatus');
@@ -157,4 +244,4 @@ Route::post('/addcomponentes', function (Illuminate\Http\Request $request) {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [HomeController::class, 'index'])->name('home');

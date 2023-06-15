@@ -20,7 +20,7 @@
 <body>
 
 <header>
-    <div class="company-logo">TIENDA DÑA GRACIE</div>
+    <div class="company-logo">TIENDA DOÑA GRACIE</div>
     <nav class="navbar">
         <ul class="nav-items">
             <li class="nav-item">
@@ -39,7 +39,7 @@
                 </li>
             @else
                 <li class="nav-item">
-                    <a class="nav-link {{ Request::routeIs('sobre') ? 'active' : '' }}" href="{{ route('sobre') }}">Carrito de compras</a>
+                    <a class="nav-link {{ Request::routeIs('sobre') ? 'active' : '' }}" href="{{ route('carrito') }}">Carrito de compras</a>
                 </li>
                 @if(Auth::user()->id_rol==2)
                     <li class="nav-item">

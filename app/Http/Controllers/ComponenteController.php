@@ -19,7 +19,7 @@ class ComponenteController extends Controller
         $clave = $cat->input('clave');
         $categorias = Componente::where('id_categoria', $clave)
             ->get();
-        return view('producto', ['componentes' => $categorias]);
+        return view('producto', ['componentes' => $categorias, 'cat'=>$clave]);
 
     }
     public function eliminar($id)

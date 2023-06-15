@@ -11,6 +11,7 @@
                     </div>
                 </div>
             </div>
+            @include("notificacion")
             <div class="row">
                 <!-- Single Product -->
                 @foreach($componentes as $componente)
@@ -24,9 +25,17 @@
                                 <img src="data:image/png;base64,{{$imagen}}" alt='Img blob desde MySQL'
                                      class="img-fluid"/>
                                 <span class="new">new</span>
-                                <ul>
-                                    <li><a href="#"><i class="fas fa-shopping-cart"></i></a></li>
-                                </ul>
+                                @guest()
+                                @else
+                                    <ul>
+                                        <li>
+                                            <a href="{{route('agregarpcarrito', ['id'=> $componente->clave_componente, 'cat'=>$cat])}}">
+                                                <i class="fas fa-shopping-cart">
+                                                </i></a>
+                                        </li>
+                                    </ul>
+                                @endguest
+
                             </div>
                             <div class="part-2">
                                 <h3 class="product-title">{{$componente->nombre_componente}}</h3>
