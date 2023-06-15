@@ -20,7 +20,7 @@
 <body>
 
 <header>
-    <div class="company-logo">TIENDA DOÑA GRACIE</div>
+    <div class="company-logo">"The Component Store"</div>
     <nav class="navbar">
         <ul class="nav-items">
             <li class="nav-item">
