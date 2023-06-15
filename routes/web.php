@@ -13,6 +13,7 @@ use App\Models\Ventum;
 use \App\Http\Controllers\MailController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
@@ -66,7 +67,8 @@ Route::get('/compa-exitosa', function () {
     $fecha = date('Ymd'); // Obtener la fecha actual en formato YYYYMMDD
 
     // Obtener el último folio de venta para la fecha actual
-    $ultimoFolio = Ventum::where('folio_venta', 'like', $fecha . '%')->max('folio_venta');
+    $ultimoFolio = Ventum::where(DB::raw('CONVERT(folio_venta USING utf8mb4) COLLATE utf8mb4_unicode_ci'), 'like', $fecha . '%')
+        ->max('folio_venta');
 
     if ($ultimoFolio) {
         // Obtener el número del último folio y sumarle 1
